@@ -3,6 +3,7 @@
     "langchain",
     "Llamafile",
     "openai",
+    "Qdrant",
     "vectorstores"
   ]
 }
