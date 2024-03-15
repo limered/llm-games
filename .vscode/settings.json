@@ -5,5 +5,9 @@
     "openai",
     "Qdrant",
     "vectorstores"
+  ],
+  "cSpell.enableFiletypes": [
+    "!jupyter",
+    "!python"
   ]
 }
