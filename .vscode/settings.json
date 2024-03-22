@@ -9,5 +9,7 @@
   "cSpell.enableFiletypes": [
     "!jupyter",
     "!python"
-  ]
+  ],
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.autoImportCompletions": false
 }
