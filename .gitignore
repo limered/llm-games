@@ -6,3 +6,5 @@ CAIML/local_qdrant/
 CAIML/data/Datenschutzhandbuch.pdf
 
 CAIML/data/lyrics.zip
+
+CAIML_dotNet/RAG_Basic/*/obj/
