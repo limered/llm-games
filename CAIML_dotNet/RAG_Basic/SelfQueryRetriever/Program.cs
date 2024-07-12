@@ -4,7 +4,7 @@ using LangChain.Databases.Sqlite;
 using LangChain.DocumentLoaders;
 using LangChain.Extensions;
 using LangChain.Providers;
-using RAG_SelfQueryRetriever;
+using SelfQueryRetriever;
 
 // load model
 var llmModel = OpenAiModelHelper.SetupLLM();
