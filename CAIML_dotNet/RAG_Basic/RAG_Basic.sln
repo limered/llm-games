@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAG_Basic", "RAG_Basic\RAG_Basic.csproj", "{D1820886-98C4-4A01-A60D-74D8BFB7B292}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basic", "Basic\Basic.csproj", "{D1820886-98C4-4A01-A60D-74D8BFB7B292}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{499308C3-5912-4B30-8E9A-1A1C099BAB5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAG_SelfQueryRetriever", "RAG_SelfQueryRetriever\RAG_SelfQueryRetriever.csproj", "{0A8C5498-649E-4CBD-AE4D-D376B188E563}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfQueryRetriever", "SelfQueryRetriever\SelfQueryRetriever.csproj", "{0A8C5498-649E-4CBD-AE4D-D376B188E563}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParentDocumentRetriever", "ParentDocumentRetriever\ParentDocumentRetriever.csproj", "{2CD9DFDA-5568-4260-A6D8-86950F484276}"
 EndProject

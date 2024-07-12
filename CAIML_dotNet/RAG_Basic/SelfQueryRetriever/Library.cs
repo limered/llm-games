@@ -1,6 +1,6 @@
 ﻿using LangChain.DocumentLoaders;
 
-namespace RAG_SelfQueryRetriever;
+namespace SelfQueryRetriever;
 
 public static class Library
 {
