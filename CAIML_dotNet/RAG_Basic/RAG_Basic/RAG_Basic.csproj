@@ -15,4 +15,8 @@
       <PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.13.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Helpers\Helpers.csproj" />
+    </ItemGroup>
+
 </Project>
