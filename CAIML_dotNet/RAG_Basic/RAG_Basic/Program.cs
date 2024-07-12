@@ -47,9 +47,9 @@ var prompt = $"""
               If the answer is not in context then just say that you don't know, don't try to make up an answer.
               Keep the answer short.
               
-              # Context
+              << Context >>
               {similarDocuments.AsString()}
-              # Context End
+              << Context End >>
               
               Question: {question}
               

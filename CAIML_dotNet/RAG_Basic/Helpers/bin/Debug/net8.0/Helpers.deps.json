@@ -1,0 +1,182 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "Helpers/1.0.0": {
+        "dependencies": {
+          "LangChain.Databases.Abstractions": "0.15.1-dev.12",
+          "LangChain.Providers.OpenAI": "0.15.1-dev.12"
+        },
+        "runtime": {
+          "Helpers.dll": {}
+        }
+      },
+      "LangChain.Databases.Abstractions/0.15.1-dev.12": {
+        "runtime": {
+          "lib/net8.0/LangChain.Databases.Abstractions.dll": {
+            "assemblyVersion": "0.0.0.0",
+            "fileVersion": "0.15.1.0"
+          }
+        }
+      },
+      "LangChain.Polyfills/0.15.1-dev.12": {
+        "runtime": {
+          "lib/net8.0/LangChain.Polyfills.dll": {
+            "assemblyVersion": "0.0.0.0",
+            "fileVersion": "0.15.1.0"
+          }
+        }
+      },
+      "LangChain.Providers.Abstractions/0.15.1-dev.12": {
+        "dependencies": {
+          "System.Memory.Data": "8.0.0"
+        },
+        "runtime": {
+          "lib/net8.0/LangChain.Providers.Abstractions.dll": {
+            "assemblyVersion": "0.0.0.0",
+            "fileVersion": "0.15.1.0"
+          }
+        }
+      },
+      "LangChain.Providers.OpenAI/0.15.1-dev.12": {
+        "dependencies": {
+          "LangChain.Polyfills": "0.15.1-dev.12",
+          "LangChain.Providers.Abstractions": "0.15.1-dev.12",
+          "tryAGI.OpenAI": "2.0.9"
+        },
+        "runtime": {
+          "lib/net8.0/LangChain.Providers.OpenAI.dll": {
+            "assemblyVersion": "0.0.0.0",
+            "fileVersion": "0.15.1.0"
+          }
+        }
+      },
+      "OpenAI.Constants/2.0.9": {
+        "runtime": {
+          "lib/net8.0/OpenAI.Constants.dll": {
+            "assemblyVersion": "2.0.9.0",
+            "fileVersion": "2.0.9.0"
+          }
+        }
+      },
+      "System.Memory.Data/8.0.0": {
+        "dependencies": {
+          "System.Text.Json": "8.0.0"
+        },
+        "runtime": {
+          "lib/net8.0/System.Memory.Data.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.23.53103"
+          }
+        }
+      },
+      "System.Text.Encodings.Web/8.0.0": {},
+      "System.Text.Json/8.0.0": {
+        "dependencies": {
+          "System.Text.Encodings.Web": "8.0.0"
+        }
+      },
+      "Tiktoken/1.2.0": {
+        "runtime": {
+          "lib/net8.0/Tiktoken.dll": {
+            "assemblyVersion": "1.2.0.0",
+            "fileVersion": "1.2.0.0"
+          }
+        }
+      },
+      "tryAGI.OpenAI/2.0.9": {
+        "dependencies": {
+          "OpenAI.Constants": "2.0.9",
+          "Tiktoken": "1.2.0"
+        },
+        "runtime": {
+          "lib/net8.0/OpenAI.dll": {
+            "assemblyVersion": "2.0.9.0",
+            "fileVersion": "2.0.9.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Helpers/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "LangChain.Databases.Abstractions/0.15.1-dev.12": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-xKCoZVzOXC7UPkMd5PFfW3RYW5UxjRqIiN0nc2D6F3vPtwWqnupLddqb/uiFNa8LqJ5tI6ZHxV2+c/xMZw4d2Q==",
+      "path": "langchain.databases.abstractions/0.15.1-dev.12",
+      "hashPath": "langchain.databases.abstractions.0.15.1-dev.12.nupkg.sha512"
+    },
+    "LangChain.Polyfills/0.15.1-dev.12": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-YC9ghCYknljTKjMmgtIEvDMmeEzMlADemth508FxF25hpY45VXpzdwVuKeTeNtbLhkTmG22u+VaNWrAL7B1ixA==",
+      "path": "langchain.polyfills/0.15.1-dev.12",
+      "hashPath": "langchain.polyfills.0.15.1-dev.12.nupkg.sha512"
+    },
+    "LangChain.Providers.Abstractions/0.15.1-dev.12": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-hZujn61YrwjvoYN+3ZWVGXWYusdeknoye8NxOhTBqrNlakSErRRF+wRLttMTCvFZqLJoCANRlyJlni7NMXvahw==",
+      "path": "langchain.providers.abstractions/0.15.1-dev.12",
+      "hashPath": "langchain.providers.abstractions.0.15.1-dev.12.nupkg.sha512"
+    },
+    "LangChain.Providers.OpenAI/0.15.1-dev.12": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yMfygZYYmknQxQ/WnB5EW8c7pLQiT5FkpHY6Eh8YNwcS65gRuTZ4aWTTPBo4rw3gDQe2WQE4J42ZFldRC5TMzw==",
+      "path": "langchain.providers.openai/0.15.1-dev.12",
+      "hashPath": "langchain.providers.openai.0.15.1-dev.12.nupkg.sha512"
+    },
+    "OpenAI.Constants/2.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-enbR4AuU37Fj7/f4ljUVqduKWUMfFFQX9xD9rbozoIhum+eHWYrGfWa2Yuhs0RkmEijmqXBjaZVVo9ziR0AJww==",
+      "path": "openai.constants/2.0.9",
+      "hashPath": "openai.constants.2.0.9.nupkg.sha512"
+    },
+    "System.Memory.Data/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-iNz0OOSj4bcOdVvyBzaDwJe0aA2nbGVQzUGAaN4bngJu2g8tMncWb7SsR/EdSMCyf0J3KHMCYu3QR/bnckxvdg==",
+      "path": "system.memory.data/8.0.0",
+      "hashPath": "system.memory.data.8.0.0.nupkg.sha512"
+    },
+    "System.Text.Encodings.Web/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yev/k9GHAEGx2Rg3/tU6MQh4HGBXJs70y7j1LaM1i/ER9po+6nnQ6RRqTJn1E7Xu0fbIFK80Nh5EoODxrbxwBQ==",
+      "path": "system.text.encodings.web/8.0.0",
+      "hashPath": "system.text.encodings.web.8.0.0.nupkg.sha512"
+    },
+    "System.Text.Json/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OdrZO2WjkiEG6ajEFRABTRCi/wuXQPxeV6g8xvUJqdxMvvuCCEk86zPla8UiIQJz3durtUEbNyY/3lIhS0yZvQ==",
+      "path": "system.text.json/8.0.0",
+      "hashPath": "system.text.json.8.0.0.nupkg.sha512"
+    },
+    "Tiktoken/1.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-YeEWMh6Byyb162ZWFmagl11GiFragK4OmMdVQ8w342g/fC27nwuABRIVS5bv8yM+58UWAncHmW4F6JHjkPJyeQ==",
+      "path": "tiktoken/1.2.0",
+      "hashPath": "tiktoken.1.2.0.nupkg.sha512"
+    },
+    "tryAGI.OpenAI/2.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-d8T6/egVWAyIpSaFiX5R52TTMHUZwMoRHQzjUIIWHkiYAqUrdDjDyl/+QQEC9KhWjK2YtynDJKUWHF3ZsTfX9A==",
+      "path": "tryagi.openai/2.0.9",
+      "hashPath": "tryagi.openai.2.0.9.nupkg.sha512"
+    }
+  }
+}

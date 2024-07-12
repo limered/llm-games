@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v8.0": {
       "RAG_Basic/1.0.0": {
         "dependencies": {
+          "Helpers": "1.0.0",
           "LLamaSharp.Backend.Cpu": "0.13.0",
           "LangChain": "0.15.1-dev.12",
           "LangChain.Databases.Abstractions": "0.15.1-dev.12",
@@ -1265,6 +1266,14 @@
             "fileVersion": "2.0.9.0"
           }
         }
+      },
+      "Helpers/1.0.0": {
+        "dependencies": {
+          "LangChain.Providers.OpenAI": "0.15.1-dev.12"
+        },
+        "runtime": {
+          "Helpers.dll": {}
+        }
       }
     }
   },
@@ -2050,6 +2059,11 @@
       "sha512": "sha512-d8T6/egVWAyIpSaFiX5R52TTMHUZwMoRHQzjUIIWHkiYAqUrdDjDyl/+QQEC9KhWjK2YtynDJKUWHF3ZsTfX9A==",
       "path": "tryagi.openai/2.0.9",
       "hashPath": "tryagi.openai.2.0.9.nupkg.sha512"
+    },
+    "Helpers/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

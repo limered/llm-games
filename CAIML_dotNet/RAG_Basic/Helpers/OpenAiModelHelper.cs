@@ -6,6 +6,8 @@ namespace Helpers;
 
 public static class OpenAiModelHelper
 {
+    public const int Dimensions = 1536;
+    
     public static OpenAiChatModel SetupLLM()
     {
         var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")!;

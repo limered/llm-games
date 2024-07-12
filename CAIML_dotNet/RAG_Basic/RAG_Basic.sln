@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAG_Basic", "RAG_Basic\RAG_
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{499308C3-5912-4B30-8E9A-1A1C099BAB5B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAG_SelfQueryRetriever", "RAG_SelfQueryRetriever\RAG_SelfQueryRetriever.csproj", "{0A8C5498-649E-4CBD-AE4D-D376B188E563}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParentDocumentRetriever", "ParentDocumentRetriever\ParentDocumentRetriever.csproj", "{2CD9DFDA-5568-4260-A6D8-86950F484276}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{499308C3-5912-4B30-8E9A-1A1C099BAB5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{499308C3-5912-4B30-8E9A-1A1C099BAB5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{499308C3-5912-4B30-8E9A-1A1C099BAB5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A8C5498-649E-4CBD-AE4D-D376B188E563}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A8C5498-649E-4CBD-AE4D-D376B188E563}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A8C5498-649E-4CBD-AE4D-D376B188E563}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A8C5498-649E-4CBD-AE4D-D376B188E563}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CD9DFDA-5568-4260-A6D8-86950F484276}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CD9DFDA-5568-4260-A6D8-86950F484276}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CD9DFDA-5568-4260-A6D8-86950F484276}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CD9DFDA-5568-4260-A6D8-86950F484276}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
