@@ -1,10 +1,15 @@
-﻿using Helpers;
+﻿using System.Text;
+using Helpers;
 using LangChain.Chains;
 using LangChain.Databases.Sqlite;
 using LangChain.DocumentLoaders;
 using LangChain.Extensions;
 using LangChain.Splitters.Text;
 using ParentDocumentRetriever;
+
+const bool indexData = false;
+const bool retrieveParent = true;
+const bool useOnlyParent = false;
 
 var llmModel = OpenAiModelHelper.SetupLLM();
 var embeddingModel = OpenAiModelHelper.SetupEmbedding();
@@ -13,51 +18,75 @@ const string databaseFile = "vectors.db";
 const string parentTable = "parents";
 const string childTable = "children";
 var vectorDatabase = new SqLiteVectorDatabase(databaseFile);
-await vectorDatabase.DeleteCollectionAsync(parentTable);
-await vectorDatabase.DeleteCollectionAsync(childTable);
+if (indexData)
+{
+    await vectorDatabase.DeleteCollectionAsync(parentTable);
+    await vectorDatabase.DeleteCollectionAsync(childTable);
+}
+
 
 var parentCollection = await vectorDatabase.GetOrCreateCollectionAsync(parentTable, OpenAiModelHelper.Dimensions);
 var childCollection = await vectorDatabase.GetOrCreateCollectionAsync(childTable, OpenAiModelHelper.Dimensions);
 
 // Data
-var pathToFile = Path.Combine(
-    Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName
-        .Split(Path.DirectorySeparatorChar).Append("tesla.txt").ToArray()
-);
-var documents = await new FileLoader().LoadAsync(DataSource.FromPath(pathToFile));
+if(indexData)
+{
+    var pathToFile = Path.Combine(
+        Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName
+            .Split(Path.DirectorySeparatorChar).Append("turm.txt").ToArray()
+    );
+    var documents = await new FileLoader().LoadAsync(DataSource.FromPath(pathToFile));
 
-var parentSplitter = new CharacterTextSplitter(separator: " ", chunkSize: 2000, chunkOverlap: 0);
-var childSplitter = new CharacterTextSplitter(separator: " ", chunkSize: 200, chunkOverlap: 0);
+    var parentSplitter = new CharacterTextSplitter(separator: " ", chunkSize: 5000, chunkOverlap: 0);
+    var childSplitter = new CharacterTextSplitter(separator: " ", chunkSize: 500, chunkOverlap: 0);
 
-var splitParentDocuments = parentSplitter.SplitDocuments(documents);
-await parentCollection.AddDocumentsAsync(embeddingModel, splitParentDocuments);
+    var splitParentDocuments = parentSplitter.SplitDocuments(documents);
+    await parentCollection.AddDocumentsAsync(embeddingModel, splitParentDocuments);
 
 // Read Back Data
-var splitChildDocuments = await ChildDocuments
+    var splitChildDocuments = await ChildDocuments
         .ExtractFromParentCollection(databaseFile, parentCollection.Name, childSplitter);
-await childCollection.AddDocumentsAsync(embeddingModel, splitChildDocuments);
+    await childCollection.AddDocumentsAsync(embeddingModel, splitChildDocuments);
+    
+    Console.WriteLine($"Parent Document Count: {splitParentDocuments.Count}");
+    Console.WriteLine($"Child Document Count: {splitChildDocuments.Count}");
+}
 
 ///////////
 //  RAG  //
 ///////////
 
 // query
-const bool useParent = true;
-const string question = "What was the reason for Tesla not to mary?";
-var similarDocuments = await childCollection.GetSimilarDocuments(
-    embeddingModel: embeddingModel,
-    request: question,
-    amount: 1);
+
+const string question = "What lights did the tower have?";
+IReadOnlyCollection<Document>? similarDocuments;
+if (useOnlyParent)
+{
+    similarDocuments = await parentCollection.GetSimilarDocuments(
+        embeddingModel: embeddingModel,
+        request: question,
+        amount: 1); 
+}else
+{
+    similarDocuments = await childCollection.GetSimilarDocuments(
+        embeddingModel: embeddingModel,
+        request: question,
+        amount: 2);
+}
 
 var result = similarDocuments.AsString();
 
-if(useParent && similarDocuments.Count != 0)
+if(retrieveParent && similarDocuments.Count != 0)
 {
-    result = (await parentCollection.GetAsync(similarDocuments.First().Metadata["parentId"].ToString()!))!.Text;
-}
+    var sb = new StringBuilder();
+    foreach (var document in similarDocuments)
+    {
+        var parentDocumentText = (await parentCollection.GetAsync(document.Metadata["parentId"].ToString()!))!.Text;
+        sb.AppendLine(parentDocumentText);
+    }
 
-Console.WriteLine($"Parent Document Count: {splitParentDocuments.Count}");
-Console.WriteLine($"Child Document Count: {splitChildDocuments.Count}");
+    result = sb.ToString();
+}
 
 Console.WriteLine("Child: ");
 Console.WriteLine(similarDocuments.AsString());
