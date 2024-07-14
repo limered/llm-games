@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfQueryRetriever", "SelfQ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParentDocumentRetriever", "ParentDocumentRetriever\ParentDocumentRetriever.csproj", "{2CD9DFDA-5568-4260-A6D8-86950F484276}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiVector", "MultiVector\MultiVector.csproj", "{ED1291DC-FCF5-4E4D-9F00-80BCEC0CEB73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{2CD9DFDA-5568-4260-A6D8-86950F484276}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CD9DFDA-5568-4260-A6D8-86950F484276}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CD9DFDA-5568-4260-A6D8-86950F484276}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED1291DC-FCF5-4E4D-9F00-80BCEC0CEB73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED1291DC-FCF5-4E4D-9F00-80BCEC0CEB73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED1291DC-FCF5-4E4D-9F00-80BCEC0CEB73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED1291DC-FCF5-4E4D-9F00-80BCEC0CEB73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

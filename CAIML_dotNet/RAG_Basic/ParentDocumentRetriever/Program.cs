@@ -24,7 +24,6 @@ if (indexData)
     await vectorDatabase.DeleteCollectionAsync(childTable);
 }
 
-
 var parentCollection = await vectorDatabase.GetOrCreateCollectionAsync(parentTable, OpenAiModelHelper.Dimensions);
 var childCollection = await vectorDatabase.GetOrCreateCollectionAsync(childTable, OpenAiModelHelper.Dimensions);
 
