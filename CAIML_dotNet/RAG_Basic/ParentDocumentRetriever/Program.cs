@@ -4,80 +4,55 @@ using LangChain.Chains;
 using LangChain.Databases.Sqlite;
 using LangChain.DocumentLoaders;
 using LangChain.Extensions;
-using LangChain.Splitters.Text;
-using ParentDocumentRetriever;
+using ParentDocumentRetriever.Children;
+using ParentDocumentRetriever.Parents;
 
-const bool indexData = false;
-const bool retrieveParent = true;
-const bool useOnlyParent = false;
+
+
+const bool indexParents = true;
+const bool indexChildren = true;
+
+const RetrievalMode retrievalMode = RetrievalMode.OnlyChild;
 
 var llmModel = OpenAiModelHelper.SetupLLM();
 var embeddingModel = OpenAiModelHelper.SetupEmbedding();
 
 const string databaseFile = "vectors.db";
-const string parentTable = "parents";
-const string childTable = "children";
 var vectorDatabase = new SqLiteVectorDatabase(databaseFile);
-if (indexData)
-{
-    await vectorDatabase.DeleteCollectionAsync(parentTable);
-    await vectorDatabase.DeleteCollectionAsync(childTable);
-}
 
-var parentCollection = await vectorDatabase.GetOrCreateCollectionAsync(parentTable, OpenAiModelHelper.Dimensions);
-var childCollection = await vectorDatabase.GetOrCreateCollectionAsync(childTable, OpenAiModelHelper.Dimensions);
+var parentCollection = new ParentsCollection(embeddingModel, vectorDatabase);
+var childCollection = new ChildrenCollection(embeddingModel, vectorDatabase);
 
-// Data
-if (indexData)
-{
-    var pathToFile = Path.Combine(
-        Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName
-            .Split(Path.DirectorySeparatorChar).Append("turm.txt").ToArray()
-    );
-    var documents = await new FileLoader().LoadAsync(DataSource.FromPath(pathToFile));
+if (indexParents) await parentCollection.ClearCollection();
+if (indexChildren) await childCollection.ClearCollection();
 
-    var parentSplitter = new CharacterTextSplitter(" ", 5000, 0);
-    var childSplitter = new CharacterTextSplitter(" ", 500, 0);
+var pathToFile = Path.Combine(
+    Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName
+        .Split(Path.DirectorySeparatorChar).Append("turm.txt").ToArray()
+);
+var documents = await new FileLoader().LoadAsync(DataSource.FromPath(pathToFile));
 
-    var splitParentDocuments = parentSplitter.SplitDocuments(documents);
-    await parentCollection.AddDocumentsAsync(embeddingModel, splitParentDocuments);
+if (indexParents) await parentCollection.LoadIntoCollectionAsync(documents.ToArray());
 
-// Read Back Data
-    var splitChildDocuments = await ChildDocuments
-        .ExtractFromParentCollection(databaseFile, parentCollection.Name, childSplitter);
-    await childCollection.AddDocumentsAsync(embeddingModel, splitChildDocuments);
+var parentIdToText = await parentCollection.ExtractIdAndTextOfDocuments(databaseFile);
+if (indexChildren) await childCollection.LoadIntoCollectionAsync(parentIdToText);
 
-    Console.WriteLine($"Parent Document Count: {splitParentDocuments.Count}");
-    Console.WriteLine($"Child Document Count: {splitChildDocuments.Count}");
-}
+// const string question = "Tell me about unusual incidents associated with the tower?";
+const string question = "Give me the most important information for the tower?";
 
-///////////
-//  RAG  //
-///////////
-
-// query
-
-const string question = "What lights did the tower have?";
-IReadOnlyCollection<Document>? similarDocuments;
-if (useOnlyParent)
-    similarDocuments = await parentCollection.GetSimilarDocuments(
-        embeddingModel,
-        question,
-        1);
-similarDocuments = await childCollection.GetSimilarDocuments(
-    embeddingModel,
-    question,
-    2);
+var similarDocuments = retrievalMode == RetrievalMode.OnlyParent
+    ? await parentCollection.RetrieveSimilar(question)
+    : await childCollection.Retrieve(question);
 
 var result = similarDocuments.AsString();
 
-if (retrieveParent && similarDocuments.Count != 0)
+if (retrievalMode == RetrievalMode.Mixed && similarDocuments.Count != 0)
 {
     var sb = new StringBuilder();
     foreach (var document in similarDocuments)
     {
-        var parentDocumentText = (await parentCollection.GetAsync(document.Metadata["parentId"].ToString()!))!.Text;
-        sb.AppendLine(parentDocumentText);
+        var parentDocumentText = await parentCollection.RetrieveDocument(document.Metadata["parentId"].ToString()!);
+        sb.AppendLine(parentDocumentText.PageContent);
     }
 
     result = sb.ToString();
@@ -89,11 +64,12 @@ Console.WriteLine("Parent: ");
 Console.WriteLine(result);
 
 // building a chain
-var prompt =
+const string prompt =
     """
     Use only the following pieces of context to answer the question at the end.
     If the answer is not in context then just say that you don't know, don't try to make up an answer.
     Give as much detail as possible without inventing or using learned knowledge.
+    Be verbose!
 
     << Context >>
     {context}
@@ -112,3 +88,10 @@ var chain =
     Chain.LLM(llmModel);
 
 chain.RunAsync().Wait();
+
+public enum RetrievalMode
+{
+    OnlyChild,
+    OnlyParent,
+    Mixed
+}
