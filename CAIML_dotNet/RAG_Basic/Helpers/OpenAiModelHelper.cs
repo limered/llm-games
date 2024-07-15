@@ -8,19 +8,21 @@ public static class OpenAiModelHelper
 {
     public const int Dimensions = 1536;
     
-    public static OpenAiChatModel SetupLLM()
+    public static OpenAiChatModel SetupLLM(bool registerCallbacks = true)
     {
         var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")!;
         var llmModel = new OpenAiChatModel(apiKey, ChatModels.Gpt35Turbo);
-        llmModel.PromptSent += (_, s) =>
+        if(registerCallbacks)
         {
-            Console.WriteLine(
-                "---------------------------------------------------------------------------------------------------");
-            Console.WriteLine("Prompt:");
-            Console.Write(s);
-        };
-        llmModel.PartialResponseGenerated += (_, s) => { Console.Write(s); };
-
+            llmModel.PromptSent += (_, s) =>
+            {
+                Console.WriteLine(
+                    "---------------------------------------------------------------------------------------------------");
+                Console.WriteLine("Prompt:");
+                Console.Write(s);
+            };
+            llmModel.PartialResponseGenerated += (_, s) => { Console.Write(s); };
+        }
         return llmModel;
     }
 
