@@ -49,19 +49,19 @@ public class Questions
         });
     }
 
-    public async Task<string[]?> GenerateForAsync(string text, int questionCount)
+    public async Task<string[]> GenerateForAsync(string text, int questionCount)
     {
         _generatedTexts = null;
 
         var questionChain =
-            Chain.Set(text, "context")
-            | Chain.Set(questionCount, "count")
-            | Chain.Template(QuestionsPrompt)
-            | Chain.LLM(_llm);
+            Chain.Set(text, "context") |
+            Chain.Set(questionCount, "count") |
+            Chain.Template(QuestionsPrompt) |
+            Chain.LLM(_llm);
 
         await questionChain.RunAsync();
 
-        return _generatedTexts?.Questions;
+        return _generatedTexts?.Questions ?? [];
     }
 
     private class ResultingQuestions

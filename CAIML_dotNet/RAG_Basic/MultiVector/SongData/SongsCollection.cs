@@ -38,4 +38,12 @@ public class SongsCollection
     {
         return await VectorDbIds.ExtractFromCollection(databaseFile, CollectionName);
     }
+
+    public async Task<Document> RetrieveSong(string id)
+    {
+        var collection = await _vectorDatabase.GetOrCreateCollectionAsync(
+            CollectionName,
+            OpenAiModelHelper.Dimensions);
+        return await collection.GetDocumentByIdAsync(id) ?? Document.Empty;
+    }
 }

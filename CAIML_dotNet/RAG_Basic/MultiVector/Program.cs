@@ -1,39 +1,29 @@
 ﻿using Helpers;
+using LangChain.Chains;
 using LangChain.Databases.Sqlite;
 using LangChain.DocumentLoaders;
-using LangChain.Extensions;
+using MultiVector;
 using MultiVector.HypotheticalQuestions;
 using MultiVector.SongData;
+using MultiVector.Summaries;
 
-const bool indexSongs = true;
+const bool indexSongs = false;
 const bool indexQuestions = false;
-const bool indexSummaries = true;
+const bool indexSummaries = false;
 
-var llmModel = OpenAiModelHelper.SetupLLM(false);
+var llm = OpenAiModelHelper.SetupLLM(false);
 var embeddingModel = OpenAiModelHelper.SetupEmbedding();
 
 const string databaseFile = "vectors.db";
-const string summaryTable = "summaries";
-const string questionsTable = "Questions";
-var vectorDatabase = new SqLiteVectorDatabase(databaseFile);
+using var vectorDatabase = new SqLiteVectorDatabase(databaseFile);
 
 var songs = new SongsCollection(embeddingModel, vectorDatabase);
+var questionCollection = new QuestionsCollection(embeddingModel, vectorDatabase);
+var summaryCollection = new SummaryCollection(embeddingModel, vectorDatabase, llm);
 
-if (indexSongs)
-{
-    await songs.ClearCollection();
-}
-if (indexQuestions)
-{
-    await vectorDatabase.DeleteCollectionAsync(questionsTable);
-}
-if (indexSummaries)
-{
-    await vectorDatabase.DeleteCollectionAsync(summaryTable);
-}
-
-var summaryCollection = await vectorDatabase.GetOrCreateCollectionAsync(summaryTable, OpenAiModelHelper.Dimensions);
-var questionsCollection = await vectorDatabase.GetOrCreateCollectionAsync(questionsTable, OpenAiModelHelper.Dimensions);
+if (indexSongs) await songs.ClearCollection();
+if (indexQuestions) await questionCollection.ClearCollection();
+if (indexSummaries) await summaryCollection.ClearCollection();
 
 string[] fileNames =
 [
@@ -52,30 +42,51 @@ var fileTasks = fileNames
 
 var files = (await Task.WhenAll(fileTasks)).Select(documents => documents.First()).ToArray();
 
-if (indexSongs)
-{
-    await songs.LoadIntoDbCollection(files);
-}
+if (indexSongs) await songs.LoadIntoDbCollection(files);
 
 var songIds = await songs.RetrieveIds(databaseFile);
 
-if (indexQuestions)
-{
-    const int songNr = 0;
-    
-    var questionGenerator = new Questions();
-    var questionDocuments = new List<Document>();
+if (indexQuestions) await questionCollection.LoadIntoDbCollection(files, songIds);
 
-    var questions = await questionGenerator.GenerateForAsync(files[songNr].PageContent, 3);
-    questionDocuments.AddRange(questions.Select(question =>
-        new Document(question, new Dictionary<string, object> { { "parentId", songIds[songNr] } })));
+if (indexSummaries) await summaryCollection.LoadIntoDbCollection(files, songIds);
 
-    await questionsCollection.AddDocumentsAsync(embeddingModel, questionDocuments);
-}
 
-if (indexSummaries)
-{
-    
-}
+// const string question = "Everybody expects too much of me. I'm tired of it. I need to be free. What should I do?";
+// const string question = "Can i get free tickets to the concert?";
+// const string question = "Is everything my fault?";
+// const string question = "Song about importance of self-worth and independence in a relationship.";
+const string question = "I struggle with self-perception. What can i do?";
 
-// RAG
+var relevantQuestions = await questionCollection.Retrieve(question);
+var relevantSummaries = await summaryCollection.Retrieve(question);
+
+var reranker = new SimpleReranker(embeddingModel);
+var bestSongId = await reranker.Rerank(relevantQuestions.Concat(relevantSummaries).ToArray(), question);
+var bestSongDoc = await songs.RetrieveSong(bestSongId);
+var context = bestSongDoc.PageContent;
+
+const string prompt =
+    """
+    You are Taylor Swift.
+    A person, who seeks emotional guidance asks for your help.
+    Tell this person exactly what he or she needs to do to resolve his / her issues.
+    Do mention your song's title and that listening to it will help the person.
+    Use a passage from the song to support your advice.
+    Answer the Question only using the context you are provided with.:
+
+    Context:
+    {context}
+
+    Question:
+    {question}
+    """;
+
+var chain =
+    Chain.Set(context, "context") |
+    Chain.Set(question, "question") |
+    Chain.Template(prompt) |
+    Chain.LLM(llm, "text", "result");
+
+var answer = await chain.RunAsync();
+
+Console.WriteLine(answer.Value["result"].ToString());
