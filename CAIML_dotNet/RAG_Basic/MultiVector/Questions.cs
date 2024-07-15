@@ -27,26 +27,17 @@ public class Questions
 
     private readonly OpenAiChatModel _llm = OpenAiModelHelper.SetupLLM(false);
 
-    private readonly Tool _questionTool = new Function(
-        "hypothetical_questions",
-        "Generate hypothetical questions",
-        new JsonObject([
-            new KeyValuePair<string, JsonNode?>("type", "object"),
-            new KeyValuePair<string, JsonNode?>("properties", new JsonObject([
-                new KeyValuePair<string, JsonNode?>("Questions", new JsonObject([
-                    new KeyValuePair<string, JsonNode?>("type", "array"),
-                    new KeyValuePair<string, JsonNode?>("items",
-                        new JsonObject([new KeyValuePair<string, JsonNode?>("type", "string")]))
-                ]))
-            ])),
-            new KeyValuePair<string, JsonNode?>("required", new JsonArray("Questions"))
-        ]));
-
     private ResultingQuestions? _generatedTexts;
 
     public Questions()
     {
-        _llm.AddGlobalTools([_questionTool], new Dictionary<string, Func<string, CancellationToken, Task<string>>>
+        var definition = JsonSerializer.Serialize(new HypotheticalQuestionToolDefinition());
+        var questionTool = new Tool(new Function(
+            "hypothetical_questions",
+            "Generate hypothetical questions",
+            JsonNode.Parse(definition)!));
+
+        _llm.AddGlobalTools([questionTool], new Dictionary<string, Func<string, CancellationToken, Task<string>>>
         {
             {
                 "hypothetical_questions", (s, _) =>
@@ -72,9 +63,9 @@ public class Questions
 
         return _generatedTexts?.Questions;
     }
-}
 
-public class ResultingQuestions
-{
-    public string[]? Questions { get; init; }
+    private class ResultingQuestions
+    {
+        public string[]? Questions { get; init; }
+    }
 }
