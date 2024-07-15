@@ -34,12 +34,13 @@ public class QuestionsCollection
             CollectionName,
             OpenAiModelHelper.Dimensions);
 
-        var questionGenerator = new Questions();
-        var questionDocuments = new List<Document>();
+        var questionGenerator = new QuestionsGenerator();
 
         var questions = await questionGenerator.GenerateForAsync(files[songNr].PageContent, 3);
-        questionDocuments.AddRange(questions.Select(question =>
-            new Document(question, new Dictionary<string, object> { { "songId", songIds[songNr] } })));
+        var questionDocuments = questions
+            .Select(question => new Document(
+                question, new Dictionary<string, object> { { "songId", songIds[songNr] } }))
+            .ToList();
 
         await questionCollection.AddDocumentsAsync(_embeddingModel, questionDocuments, EmbeddingSettings.Default);
     }

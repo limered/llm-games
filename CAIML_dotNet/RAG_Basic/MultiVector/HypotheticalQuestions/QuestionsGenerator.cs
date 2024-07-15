@@ -7,7 +7,7 @@ using OpenAI;
 
 namespace MultiVector.HypotheticalQuestions;
 
-public class Questions
+public class QuestionsGenerator
 {
     private const string QuestionsPrompt =
         """
@@ -29,7 +29,7 @@ public class Questions
 
     private ResultingQuestions? _generatedTexts;
 
-    public Questions()
+    public QuestionsGenerator()
     {
         var definition = JsonSerializer.Serialize(new HypotheticalQuestionToolDefinition());
         var questionTool = new Tool(new Function(

@@ -28,7 +28,7 @@ var parentCollection = await vectorDatabase.GetOrCreateCollectionAsync(parentTab
 var childCollection = await vectorDatabase.GetOrCreateCollectionAsync(childTable, OpenAiModelHelper.Dimensions);
 
 // Data
-if(indexData)
+if (indexData)
 {
     var pathToFile = Path.Combine(
         Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName
@@ -36,8 +36,8 @@ if(indexData)
     );
     var documents = await new FileLoader().LoadAsync(DataSource.FromPath(pathToFile));
 
-    var parentSplitter = new CharacterTextSplitter(separator: " ", chunkSize: 5000, chunkOverlap: 0);
-    var childSplitter = new CharacterTextSplitter(separator: " ", chunkSize: 500, chunkOverlap: 0);
+    var parentSplitter = new CharacterTextSplitter(" ", 5000, 0);
+    var childSplitter = new CharacterTextSplitter(" ", 500, 0);
 
     var splitParentDocuments = parentSplitter.SplitDocuments(documents);
     await parentCollection.AddDocumentsAsync(embeddingModel, splitParentDocuments);
@@ -46,7 +46,7 @@ if(indexData)
     var splitChildDocuments = await ChildDocuments
         .ExtractFromParentCollection(databaseFile, parentCollection.Name, childSplitter);
     await childCollection.AddDocumentsAsync(embeddingModel, splitChildDocuments);
-    
+
     Console.WriteLine($"Parent Document Count: {splitParentDocuments.Count}");
     Console.WriteLine($"Child Document Count: {splitChildDocuments.Count}");
 }
@@ -60,22 +60,18 @@ if(indexData)
 const string question = "What lights did the tower have?";
 IReadOnlyCollection<Document>? similarDocuments;
 if (useOnlyParent)
-{
     similarDocuments = await parentCollection.GetSimilarDocuments(
-        embeddingModel: embeddingModel,
-        request: question,
-        amount: 1); 
-}else
-{
-    similarDocuments = await childCollection.GetSimilarDocuments(
-        embeddingModel: embeddingModel,
-        request: question,
-        amount: 2);
-}
+        embeddingModel,
+        question,
+        1);
+similarDocuments = await childCollection.GetSimilarDocuments(
+    embeddingModel,
+    question,
+    2);
 
 var result = similarDocuments.AsString();
 
-if(retrieveParent && similarDocuments.Count != 0)
+if (retrieveParent && similarDocuments.Count != 0)
 {
     var sb = new StringBuilder();
     foreach (var document in similarDocuments)
@@ -93,23 +89,26 @@ Console.WriteLine("Parent: ");
 Console.WriteLine(result);
 
 // building a chain
-var prompt = $"""
-              Use only the following pieces of context to answer the question at the end.
-              If the answer is not in context then just say that you don't know, don't try to make up an answer.
-              Give as much detail as possible without inventing or using learned knowledge.
-              
-              << Context >>
-              {result}
-              << Context End >>
+var prompt =
+    """
+    Use only the following pieces of context to answer the question at the end.
+    If the answer is not in context then just say that you don't know, don't try to make up an answer.
+    Give as much detail as possible without inventing or using learned knowledge.
 
-              Question: {question}
+    << Context >>
+    {context}
+    << Context End >>
 
-              Helpful Answer:
+    Question: {question}
 
-              """;
+    Helpful Answer:
 
-var chain = 
-    Chain.Set(prompt, outputKey:"prompt")
-    | Chain.LLM(llmModel, inputKey:"prompt");
+    """;
+
+var chain =
+    Chain.Set(result, "context") |
+    Chain.Set(question, "question") |
+    Chain.Template(prompt) |
+    Chain.LLM(llmModel);
 
 chain.RunAsync().Wait();
