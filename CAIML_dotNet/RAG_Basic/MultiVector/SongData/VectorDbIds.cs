@@ -1,8 +1,8 @@
 ﻿using Microsoft.Data.Sqlite;
 
-namespace MultiVector;
+namespace MultiVector.SongData;
 
-public class VectorDbIds
+public static class VectorDbIds
 {
     public static async Task<List<string>> ExtractFromCollection(
         string dbName,

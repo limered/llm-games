@@ -5,7 +5,7 @@ using LangChain.Chains;
 using LangChain.Providers.OpenAI;
 using OpenAI;
 
-namespace MultiVector;
+namespace MultiVector.HypotheticalQuestions;
 
 public class Questions
 {

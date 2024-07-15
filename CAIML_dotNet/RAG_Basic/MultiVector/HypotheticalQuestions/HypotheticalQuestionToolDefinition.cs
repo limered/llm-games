@@ -1,6 +1,6 @@
 ﻿// ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
-namespace MultiVector;
+namespace MultiVector.HypotheticalQuestions;
 
 public class HypotheticalQuestionToolDefinition
 {

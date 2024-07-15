@@ -2,10 +2,10 @@
 using LangChain.Databases.Sqlite;
 using LangChain.DocumentLoaders;
 using LangChain.Extensions;
-using LangChain.Providers;
-using MultiVector;
+using MultiVector.HypotheticalQuestions;
+using MultiVector.SongData;
 
-const bool indexSongs = false;
+const bool indexSongs = true;
 const bool indexQuestions = false;
 const bool indexSummaries = true;
 
@@ -13,14 +13,15 @@ var llmModel = OpenAiModelHelper.SetupLLM(false);
 var embeddingModel = OpenAiModelHelper.SetupEmbedding();
 
 const string databaseFile = "vectors.db";
-const string songTable = "songs";
 const string summaryTable = "summaries";
 const string questionsTable = "Questions";
 var vectorDatabase = new SqLiteVectorDatabase(databaseFile);
 
+var songs = new SongsCollection(embeddingModel, vectorDatabase);
+
 if (indexSongs)
 {
-    await vectorDatabase.DeleteCollectionAsync(songTable);
+    await songs.ClearCollection();
 }
 if (indexQuestions)
 {
@@ -31,7 +32,6 @@ if (indexSummaries)
     await vectorDatabase.DeleteCollectionAsync(summaryTable);
 }
 
-var songCollection = await vectorDatabase.GetOrCreateCollectionAsync(songTable, OpenAiModelHelper.Dimensions);
 var summaryCollection = await vectorDatabase.GetOrCreateCollectionAsync(summaryTable, OpenAiModelHelper.Dimensions);
 var questionsCollection = await vectorDatabase.GetOrCreateCollectionAsync(questionsTable, OpenAiModelHelper.Dimensions);
 
@@ -54,10 +54,10 @@ var files = (await Task.WhenAll(fileTasks)).Select(documents => documents.First(
 
 if (indexSongs)
 {
-    await songCollection.AddDocumentsAsync(embeddingModel, files, EmbeddingSettings.Default);
+    await songs.LoadIntoDbCollection(files);
 }
 
-var songIds = await VectorDbIds.ExtractFromCollection(databaseFile, songTable);
+var songIds = await songs.RetrieveIds(databaseFile);
 
 if (indexQuestions)
 {
